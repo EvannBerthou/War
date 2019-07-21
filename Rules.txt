@@ -1,0 +1,26 @@
+For every turn, each player have 2 choices :
+	1. Attack:
+		If the player chose to attack, they have to select
+		as many player to attack as they want.
+
+		At the end of the turn, 
+			If the player attacks a player that also chose to attack, 
+			the attacker scores 10 points and the attacked loses 10 points.
+
+			If the platyer attacks a player that chose to defend,
+			the attacker lose 10 points and the defender wins 10 points.
+
+			If 2 player attack each other, nobody win or lose any points.
+		
+	2. Defend:
+		If the player chose to defend and get attacked by another player,
+		the attack will fail, the attacker loses 10 points and the defender wins 10 points.
+		But defend come at a cost, the player will lose as many points as there are player
+		in the game. 
+		Every player in the game will win 1 point per defender.
+
+While choosing to attack or defend, players can also send request to other player.
+For exemple, player A can tell to player B to attack player C. Player B is not forced to accept
+the request from player A.
+
+At the end of the game, the player with the most points wins. (Score can be negative)
