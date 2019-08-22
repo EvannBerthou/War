@@ -21,15 +21,31 @@ class Game:
             for event in pygame.event.get():
                 if event.type == QUIT:
                     self.running = False
+                if event.type == MOUSEBUTTONDOWN:
+                    for p in self.players:
+                        if p.is_selector_clicked(pygame.mouse.get_pos()):
+                            if p.local:
+                                p.selector_selected = not p.selector_selected
+                            else:
+                                if p in self.players[0].targets:
+                                    self.players[0].targets.remove(p)
+                                else:
+                                    self.players[0].targets.append(p)
+
             self.draw()
+            self.update()
 
     def draw(self):
         self.win.fill((0,0,0))
 
-        for p in self.players:
+        #Draw player starting from local to draw selector line above other selector
+        for p in self.players[::-1]:
             p.draw(self)
 
         pygame.display.update()
+
+    def update(self):
+        pass
 
 game = Game(800,800)
 game.run()
