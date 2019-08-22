@@ -47,5 +47,5 @@ class Game:
     def update(self):
         pass
 
-game = Game(800,800)
+game = Game(1200,800)
 game.run()
