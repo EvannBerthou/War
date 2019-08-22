@@ -3,6 +3,12 @@ from pygame.locals import *
 
 from player import Player
 
+class GAME_PHASE:
+    CHOOSING  = 1,
+    TARGETING = 2,
+    DONE      = 3
+    RESULT    = 4,
+
 class Game:
     def __init__(self, w,h):
         self.w,self.h = w,h
@@ -15,6 +21,8 @@ class Game:
         for player in range(self.number_of_player):
             angle = player * (360 / self.number_of_player) - default_rotation
             self.players.append(Player(self.w, self.h, angle, local = player == 0))
+
+        self.game_phase = GAME_PHASE.CHOOSING
 
     def run(self):
         while self.running:
@@ -41,7 +49,7 @@ class Game:
 
     def on_clicked(self):
         for p in self.players:
-            if p.is_selector_clicked(pygame.mouse.get_pos()):
+            if p.is_selector_clicked(pygame.mouse.get_pos()) and self.game_phase == GAME_PHASE.TARGETING:
                 if p.local:
                     p.selector_selected = not p.selector_selected
                 else:
@@ -50,6 +58,13 @@ class Game:
                     else:
                         self.players[0].targets.append(p)
 
+    def switch_state(self, phase):
+        if phase == self.game_phase: return
+
+        self.game_phase = phase
+        for p in self.players: p.targeting = False
+        if self.game_phase == GAME_PHASE.TARGETING:
+            for p in self.players: p.targeting = True
 
 game = Game(1200,800)
 game.run()
