@@ -2,6 +2,7 @@ import pygame
 from pygame.locals import *
 
 from player import Player
+from ui import StrategyChooser
 
 class GAME_PHASE:
     CHOOSING  = 1,
@@ -10,6 +11,21 @@ class GAME_PHASE:
     RESULT    = 4,
 
 class Game:
+    def create_strategy_chooser(self):
+        strategy_chooser_w = 300
+        strategy_chooser_h = 375
+        strategy_chooser = StrategyChooser(
+                                self.w / 2 - strategy_chooser_w / 2,
+                                self.h / 2 - strategy_chooser_h / 2,
+                                strategy_chooser_w,
+                                strategy_chooser_h)
+
+        FONT_SIZE = 42
+        strategy_chooser.add_button(self.on_attack, 270, 150, (255,0,0), "Attack", FONT_SIZE)
+        strategy_chooser.add_button(self.on_defence, 270, 150, (0,0,255), "Defend", FONT_SIZE)
+
+        return strategy_chooser
+
     def __init__(self, w,h):
         self.w,self.h = w,h
         self.win = pygame.display.set_mode((self.w,self.h))
@@ -23,6 +39,7 @@ class Game:
             self.players.append(Player(self.w, self.h, angle, local = player == 0))
 
         self.game_phase = GAME_PHASE.CHOOSING
+        self.strategy_chooser = self.create_strategy_chooser()
 
     def run(self):
         while self.running:
@@ -41,6 +58,8 @@ class Game:
         #Draw player starting from local to draw selector line above other selector
         for p in self.players[::-1]:
             p.draw(self)
+
+        self.strategy_chooser.draw(self)
 
         pygame.display.update()
 
@@ -65,6 +84,12 @@ class Game:
         for p in self.players: p.targeting = False
         if self.game_phase == GAME_PHASE.TARGETING:
             for p in self.players: p.targeting = True
+
+    def on_attack(self):
+        print('attack')
+
+    def on_defence(self):
+        print('defence')
 
 game = Game(1200,800)
 game.run()
