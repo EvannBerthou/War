@@ -22,15 +22,7 @@ class Game:
                 if event.type == QUIT:
                     self.running = False
                 if event.type == MOUSEBUTTONDOWN:
-                    for p in self.players:
-                        if p.is_selector_clicked(pygame.mouse.get_pos()):
-                            if p.local:
-                                p.selector_selected = not p.selector_selected
-                            else:
-                                if p in self.players[0].targets:
-                                    self.players[0].targets.remove(p)
-                                else:
-                                    self.players[0].targets.append(p)
+                    self.on_clicked()
 
             self.draw()
             self.update()
@@ -46,6 +38,18 @@ class Game:
 
     def update(self):
         pass
+
+    def on_clicked(self):
+        for p in self.players:
+            if p.is_selector_clicked(pygame.mouse.get_pos()):
+                if p.local:
+                    p.selector_selected = not p.selector_selected
+                else:
+                    if p in self.players[0].targets:
+                        self.players[0].targets.remove(p)
+                    else:
+                        self.players[0].targets.append(p)
+
 
 game = Game(1200,800)
 game.run()
