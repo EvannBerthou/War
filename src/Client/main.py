@@ -14,7 +14,7 @@ class Game:
 
         for player in range(self.number_of_player):
             angle = player * (360 / self.number_of_player) - default_rotation
-            self.players.append(Player(self.w, self.h, angle))
+            self.players.append(Player(self.w, self.h, angle, local = player == 0))
 
     def run(self):
         while self.running:
