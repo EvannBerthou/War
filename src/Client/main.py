@@ -12,17 +12,17 @@ class GAME_PHASE:
 
 class Game:
     def create_strategy_chooser(self):
-        strategy_chooser_w = 300
-        strategy_chooser_h = 375
+        strategy_chooser_w = 600
+        strategy_chooser_h = 750
         strategy_chooser = StrategyChooser(
                                 self.DESIGN_W / 2 - strategy_chooser_w / 2,
                                 self.DESIGN_H / 2 - strategy_chooser_h / 2,
                                 strategy_chooser_w,
                                 strategy_chooser_h)
 
-        FONT_SIZE = 42
-        strategy_chooser.add_button(self.on_attack, 270, 150, (255,0,0), "Attack", FONT_SIZE)
-        strategy_chooser.add_button(self.on_defence, 270, 150, (0,0,255), "Defend", FONT_SIZE)
+        FONT_SIZE = 84
+        strategy_chooser.add_button(self.on_attack, 540, 300, (255,0,0), "Attack", FONT_SIZE)
+        strategy_chooser.add_button(self.on_defence, 540, 300, (0,0,255), "Defend", FONT_SIZE)
 
         return strategy_chooser
 
@@ -32,13 +32,13 @@ class Game:
         self.blitting_surface = pygame.Surface((self.DESIGN_W, self.DESIGN_H))
         self.win = pygame.display.set_mode((self.w,self.h))
         self.running = True
-        self.players = []
+        self.players = pygame.sprite.Group()
         self.number_of_player = 6
         default_rotation = -90
 
         for player in range(self.number_of_player):
             angle = player * (360 / self.number_of_player) - default_rotation
-            self.players.append(Player(self.DESIGN_W, self.DESIGN_H, angle, local = player == 0))
+            self.players.add(Player(self.DESIGN_W, self.DESIGN_H, angle, local = player == 0))
 
         self.game_phase = GAME_PHASE.CHOOSING
         self.strategy_chooser = self.create_strategy_chooser()
@@ -58,9 +58,12 @@ class Game:
         self.blitting_surface.fill((0,0,0))
         self.win.fill((0,0,0))
 
-        #Draw player starting from local to draw selector line above other selector
-        for p in self.players[::-1]:
-            p.draw(self)
+        #Draw circle
+        pygame.draw.circle(self.blitting_surface, (255,255,255),
+                          (self.DESIGN_W // 2, self.DESIGN_H // 2), 500, 2)
+
+        #Draw player starting from local in order to draw selector line above other selector
+        self.players.draw(self.blitting_surface)
 
         self.strategy_chooser.draw(self)
 
@@ -73,6 +76,7 @@ class Game:
     def on_clicked(self):
         for p in self.players:
             if p.is_selector_clicked(pygame.mouse.get_pos()) and self.game_phase == GAME_PHASE.TARGETING:
+                print('t')
                 if p.local:
                     p.selector_selected = not p.selector_selected
                 else:

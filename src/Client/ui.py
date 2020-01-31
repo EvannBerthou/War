@@ -2,9 +2,9 @@ import pygame
 
 pygame.font.init()
 
-TOP_MARGIN = 5
-RIGHT_MARGIN = 15
-BUTTON_MARGIN_H = 10
+TOP_MARGIN = 10
+RIGHT_MARGIN = 30
+BUTTON_MARGIN_H = 20
 
 class Button:
     def __init__(self, x,y,w,h, callback, color, text, size):
@@ -41,7 +41,7 @@ class StrategyChooser:
         self.elements = []
         self.total_height = 0
 
-        self.add_text("Choose a strategy.", 28)
+        self.add_text("Choose a strategy.", 52)
 
     def draw(self, game):
         pygame.draw.rect(game.blitting_surface, (192,192,192), (self.x,self.y,self.w,self.h))

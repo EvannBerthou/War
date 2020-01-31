@@ -1,9 +1,9 @@
 import pygame
 import math
 
-DISTANCE_FROM_CENTER = 300
+DISTANCE_FROM_CENTER = 500
 
-class Player:
+class Player(pygame.sprite.Sprite):
     def get_position(self, win_w, win_y, angle, rect_w, rect_h, dist):
         angle_x = round(math.cos(math.radians(angle)) * dist + win_w / 2 - rect_w)
         angle_y = round(math.sin(math.radians(angle)) * dist + win_y / 2 - rect_h)
@@ -20,6 +20,7 @@ class Player:
                 (self.w, self.h))
 
     def create_surface(self):
+        self.sprite.fill((255,0,0) if self.local else (255,0,255))
         rotated = pygame.transform.rotate(self.sprite, self.angle)
         center = self.rect.center
         self.rect = rotated.get_rect()
@@ -31,17 +32,19 @@ class Player:
         return (selector_x, selector_y)
 
     def __init__(self, win_w, win_h, angle, local):
+        super().__init__()
         self.w, self.h = 100,50
         self.x, self.y = self.get_position(win_w, win_h, angle, self.w / 2, self.h / 2, DISTANCE_FROM_CENTER)
-        self.angle = self.look_at_center(win_w / 2, win_h / 2)
+
         self.sprite = self.load_sprite('player.png')
         self.rect = self.sprite.get_rect()
         self.rect.center = (self.x + self.w / 2, self.y + self.h / 2) #Set the rect center to the center of the rectangle
-        self.surface = self.create_surface()
 
+        self.angle = self.look_at_center(win_w / 2, win_h / 2)
         self.local = local
+        self.image = self.create_surface()
+
         self.selector = self.create_selector(win_w, win_h, angle)
-        self.selector_color = (255,0,0) if self.local else (255,0,255)
         self.selector_selected = False
         self.selector_radius = 20
 
@@ -50,18 +53,18 @@ class Player:
 
 
     def draw(self, game):
-        pygame.draw.circle(game.blitting_surface, (255,255,255), (game.DESIGN_W // 2, game.DESIGN_H // 2), DISTANCE_FROM_CENTER, 2)
-        game.blitting_surface.blit(self.surface, self.rect)
-        # pygame.draw.rect(game.win, (255,0,0), (self.x, self.y, self.w, self.h))
-
+        return
         if self.targeting:
-            pygame.draw.circle(game.blitting_surface, self.selector_color, (self.selector[0], self.selector[1]), self.selector_radius)
+            pygame.draw.circle(game.blitting_surface, self.selector_color,
+                              (self.selector[0], self.selector[1]), self.selector_radius)
             if self.selector_selected and self.local:
                 mouse_pos = pygame.mouse.get_pos()
-                pygame.draw.line(game.line, (0,255,255), (self.selector[0], self.selector[1]),(mouse_pos[0], mouse_pos[1]))
+                pygame.draw.line(game.line, (0,255,255),
+                                (self.selector[0], self.selector[1]),(mouse_pos[0], mouse_pos[1]))
 
             for target in self.targets:
-                pygame.draw.line(game.blitting_surface, (255,255,0), (self.selector[0], self.selector[1]), (target.selector[0], target.selector[1]))
+                pygame.draw.line(game.blitting_surface, (255,255,0),
+                                (self.selector[0], self.selector[1]), (target.selector[0], target.selector[1]))
 
     def is_selector_clicked(self, mouse_pos):
         distance_to_center = (mouse_pos[0] - self.selector[0])**2 + (mouse_pos[1] - self.selector[1])**2
