@@ -31,14 +31,25 @@ class Server:
         self.socket = self.create_socket()
         self.running = True
 
+        self.stdscr = curses.initscr()
+        self.size = self.stdscr.getmaxyx()
+        self.current_row = 0
+        self.stdscr.scrollok(True)
+
+    def add_str(self, text):
+        self.stdscr.addstr(f'{text}\n')
+        self.current_row += 1
+        self.stdscr.refresh()
+
     def run(self):
+        self.add_str("[+] Démarrage du Server.")
         while self.running:
             self.socket.listen(5)
             connexions, wlist, xlist = select.select([self.socket], [], [], 0.05)
 
             for connexion in connexions:
                 (socket, (ip, port)) = self.socket.accept()
-                print("nouvelle connexion")
+                self.add_str('nouvelle connexion')
                 newthread = ClientThread(ip, port, socket)
                 newthread.start()
 
