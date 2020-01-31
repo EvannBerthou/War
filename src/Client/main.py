@@ -46,14 +46,15 @@ class Game:
 
     def run(self):
         while self.running:
+            mouse_position = self.screen_to_world(pygame.mouse.get_pos())
             for event in pygame.event.get():
                 if event.type == QUIT:
                     self.running = False
                 if event.type == MOUSEBUTTONDOWN:
-                    self.on_clicked()
+                    if self.game_phase == GAME_PHASE.CHOOSING: self.strategy_chooser.update(mouse_position)
+                    else: self.on_clicked()
 
             self.draw()
-            self.update()
 
     def draw(self):
         self.blitting_surface.fill((0,0,0))
@@ -73,9 +74,6 @@ class Game:
 
         self.win.blit(pygame.transform.scale(self.blitting_surface, (self.w,self.h)),(0,0))
         pygame.display.update()
-
-    def update(self):
-        pass
 
     def on_clicked(self):
         mouse_position = self.screen_to_world(pygame.mouse.get_pos())
