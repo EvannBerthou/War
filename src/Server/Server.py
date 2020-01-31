@@ -4,11 +4,12 @@ import select
 from threading import Thread
 
 class ClientThread(Thread):
-    def __init__(self, ip, port, socket):
+    def __init__(self, ip, port, socket, server):
         super().__init__()
         self.ip, self.port = ip, port
         self.socket = socket
         self.running = True
+        self.server = server
 
     def run(self):
         while self.running:
@@ -18,6 +19,8 @@ class ClientThread(Thread):
                 if r.strip(' ') != "":
                     print(r)
                 else:
+                    self.server.add_str('[-] Déconnexion d\'un joueur')
+                    server.number_of_client -= 1
                     self.running = False
 
 class Server:
@@ -36,6 +39,8 @@ class Server:
         self.current_row = 0
         self.stdscr.scrollok(True)
 
+        self.clients = []
+
     def add_str(self, text):
         self.stdscr.addstr(f'{text}\n')
         self.current_row += 1
@@ -49,9 +54,13 @@ class Server:
 
             for connexion in connexions:
                 (socket, (ip, port)) = self.socket.accept()
-                self.add_str('nouvelle connexion')
-                newthread = ClientThread(ip, port, socket)
+                self.add_str('[+] Nouvelle connection.')
+                newthread = ClientThread(ip, port, socket, self)
                 newthread.start()
+                self.clients.append(newthread)
+                number_of_clients = len(self.clients)
+                for client in self.clients:
+                    client.socket.send(f'client {number_of_clients}'.encode())
 
 server = Server()
 server.run()

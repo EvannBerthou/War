@@ -36,15 +36,10 @@ class Game:
         self.win = pygame.display.set_mode((self.w,self.h))
         self.running = True
 
-        self.game_socket = GameSocket()
+        self.game_socket = GameSocket(self)
 
         self.players = pygame.sprite.Group()
-        self.number_of_player = 6
-        default_rotation = -90
-
-        for player in range(self.number_of_player):
-            angle = player * (360 / self.number_of_player) - default_rotation
-            self.players.add(Player(self.DESIGN_W, self.DESIGN_H, angle, local = player == 0))
+        self.number_of_player = 0
 
         self.game_phase = GAME_PHASE.CHOOSING
         self.strategy_chooser = self.create_strategy_chooser()
@@ -113,6 +108,14 @@ class Game:
 
     def screen_to_world(self, pos):
         return (int(pos[0] * self.ratio[0]), int(pos[1] * self.ratio[1]))
+
+    def add_player(self):
+        self.players.empty()
+        default_rotation = -90
+
+        for player in range(self.number_of_player):
+            angle = player * (360 / self.number_of_player) - default_rotation
+            self.players.add(Player(self.DESIGN_W, self.DESIGN_H, angle, local = player == 0))
 
 game = Game(1280, 720)
 game.run()

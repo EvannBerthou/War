@@ -8,9 +8,9 @@ class GameSocket:
         s.connect(('127.0.0.1', 25565))
         return s
 
-    def __init__(self):
+    def __init__(self, game):
         self.socket = self.connect_to_server()
-        self.Listener = Listener(self.socket)
+        self.Listener = Listener(self.socket, game)
         self.Listener.start()
 
     def close(self):
@@ -19,14 +19,19 @@ class GameSocket:
         self.socket.close()
 
 class Listener(Thread):
-    def __init__(self, socket):
+    def __init__(self, socket, game):
         super().__init__()
         self.socket = socket
+        self.game = game
         self.running = True
 
     def run(self):
         while self.running:
             ready = select.select([self.socket], [], [], 0.05)
             if ready[0]:
-                data = self.socket.rev(1024).decode()
+                data = self.socket.recv(1024).decode()
                 print(data, flush = True)
+                parts = data.split(' ')
+                if parts[0] == 'client':
+                    self.game.number_of_player = int(parts[1])
+                    self.game.add_player()
