@@ -1,8 +1,10 @@
+import socket
 import pygame
 from pygame.locals import *
 
 from player import Player
 from ui import StrategyChooser
+from Client import GameSocket
 
 class GAME_PHASE:
     CHOOSING  = 1,
@@ -33,6 +35,9 @@ class Game:
         self.blitting_surface = pygame.Surface((self.DESIGN_W, self.DESIGN_H))
         self.win = pygame.display.set_mode((self.w,self.h))
         self.running = True
+
+        self.game_socket = GameSocket()
+
         self.players = pygame.sprite.Group()
         self.number_of_player = 6
         default_rotation = -90
@@ -55,6 +60,8 @@ class Game:
                     else: self.on_clicked()
 
             self.draw()
+
+        self.game_socket.close()
 
     def draw(self):
         self.blitting_surface.fill((0,0,0))
