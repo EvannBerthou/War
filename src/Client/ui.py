@@ -16,7 +16,7 @@ class Button:
         self.text = Text(self.x + self.w / 2, self.y + self.h / 2, text, size, True)
 
     def draw(self,game):
-        pygame.draw.rect(game.win, self.color, (self.x,self.y,self.w,self.h))
+        pygame.draw.rect(game.blitting_surface, self.color, (self.x,self.y,self.w,self.h))
         self.text.draw(game)
 
 class Text:
@@ -32,7 +32,7 @@ class Text:
             self.y -= self.surface.get_height() / 2
 
     def draw(self, game):
-        game.win.blit(self.surface, (self.x, self.y))
+        game.blitting_surface.blit(self.surface, (self.x, self.y))
 
 class StrategyChooser:
     def __init__(self, x,y,w,h):
@@ -44,7 +44,7 @@ class StrategyChooser:
         self.add_text("Choose a strategy.", 28)
 
     def draw(self, game):
-        pygame.draw.rect(game.win, (192,192,192), (self.x,self.y,self.w,self.h))
+        pygame.draw.rect(game.blitting_surface, (192,192,192), (self.x,self.y,self.w,self.h))
         [e.draw(game) for e in self.elements]
 
     def add_text(self, text, size):

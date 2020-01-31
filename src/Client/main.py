@@ -15,8 +15,8 @@ class Game:
         strategy_chooser_w = 300
         strategy_chooser_h = 375
         strategy_chooser = StrategyChooser(
-                                self.w / 2 - strategy_chooser_w / 2,
-                                self.h / 2 - strategy_chooser_h / 2,
+                                self.DESIGN_W / 2 - strategy_chooser_w / 2,
+                                self.DESIGN_H / 2 - strategy_chooser_h / 2,
                                 strategy_chooser_w,
                                 strategy_chooser_h)
 
@@ -28,6 +28,8 @@ class Game:
 
     def __init__(self, w,h):
         self.w,self.h = w,h
+        self.DESIGN_W, self.DESIGN_H = 1920,1080
+        self.blitting_surface = pygame.Surface((self.DESIGN_W, self.DESIGN_H))
         self.win = pygame.display.set_mode((self.w,self.h))
         self.running = True
         self.players = []
@@ -36,7 +38,7 @@ class Game:
 
         for player in range(self.number_of_player):
             angle = player * (360 / self.number_of_player) - default_rotation
-            self.players.append(Player(self.w, self.h, angle, local = player == 0))
+            self.players.append(Player(self.DESIGN_W, self.DESIGN_H, angle, local = player == 0))
 
         self.game_phase = GAME_PHASE.CHOOSING
         self.strategy_chooser = self.create_strategy_chooser()
@@ -53,6 +55,7 @@ class Game:
             self.update()
 
     def draw(self):
+        self.blitting_surface.fill((0,0,0))
         self.win.fill((0,0,0))
 
         #Draw player starting from local to draw selector line above other selector
@@ -61,6 +64,7 @@ class Game:
 
         self.strategy_chooser.draw(self)
 
+        self.win.blit(pygame.transform.scale(self.blitting_surface, (self.w,self.h)),(0,0))
         pygame.display.update()
 
     def update(self):
@@ -91,5 +95,5 @@ class Game:
     def on_defence(self):
         print('defence')
 
-game = Game(1200,800)
+game = Game(1280, 720)
 game.run()

@@ -50,18 +50,18 @@ class Player:
 
 
     def draw(self, game):
-        pygame.draw.circle(game.win, (255,255,255), (game.w // 2, game.h // 2), DISTANCE_FROM_CENTER, 2)
-        game.win.blit(self.surface, self.rect)
+        pygame.draw.circle(game.blitting_surface, (255,255,255), (game.DESIGN_W // 2, game.DESIGN_H // 2), DISTANCE_FROM_CENTER, 2)
+        game.blitting_surface.blit(self.surface, self.rect)
         # pygame.draw.rect(game.win, (255,0,0), (self.x, self.y, self.w, self.h))
 
         if self.targeting:
-            pygame.draw.circle(game.win, self.selector_color, (self.selector[0], self.selector[1]), self.selector_radius)
+            pygame.draw.circle(game.blitting_surface, self.selector_color, (self.selector[0], self.selector[1]), self.selector_radius)
             if self.selector_selected and self.local:
                 mouse_pos = pygame.mouse.get_pos()
-                pygame.draw.line(game.win, (0,255,255), (self.selector[0], self.selector[1]),(mouse_pos[0], mouse_pos[1]))
+                pygame.draw.line(game.line, (0,255,255), (self.selector[0], self.selector[1]),(mouse_pos[0], mouse_pos[1]))
 
             for target in self.targets:
-                pygame.draw.line(game.win, (255,255,0), (self.selector[0], self.selector[1]), (target.selector[0], target.selector[1]))
+                pygame.draw.line(game.blitting_surface, (255,255,0), (self.selector[0], self.selector[1]), (target.selector[0], target.selector[1]))
 
     def is_selector_clicked(self, mouse_pos):
         distance_to_center = (mouse_pos[0] - self.selector[0])**2 + (mouse_pos[1] - self.selector[1])**2
