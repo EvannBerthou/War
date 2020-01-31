@@ -22,7 +22,7 @@ class Game:
 
         FONT_SIZE = 84
         strategy_chooser.add_button(self.on_attack, 540, 300, (255,0,0), "Attack", FONT_SIZE)
-        strategy_chooser.add_button(self.on_defence, 540, 300, (0,0,255), "Defend", FONT_SIZE)
+        strategy_chooser.add_button(self.on_defense, 540, 300, (0,0,255), "Defend", FONT_SIZE)
 
         return strategy_chooser
 
@@ -78,8 +78,7 @@ class Game:
     def on_clicked(self):
         mouse_position = self.screen_to_world(pygame.mouse.get_pos())
         for p in self.players:
-            # if p.is_selector_clicked(mouse_position) and self.game_phase == GAME_PHASE.TARGETING:
-            if p.is_selector_clicked(mouse_position):
+            if p.is_selector_clicked(mouse_position) and self.game_phase == GAME_PHASE.TARGETING:
                 if p.local:
                     p.selector_selected = not p.selector_selected
                 else:
@@ -98,10 +97,12 @@ class Game:
             for p in self.players: p.targeting = True
 
     def on_attack(self):
-        print('attack')
+        self.game_phase = GAME_PHASE.TARGETING
+        self.strategy_chooser.toggle()
 
-    def on_defence(self):
-        print('defence')
+    def on_defense(self):
+        self.game_phase = GAME_PHASE.DONE
+        self.strategy_chooser.toggle()
 
     def screen_to_world(self, pos):
         return (int(pos[0] * self.ratio[0]), int(pos[1] * self.ratio[1]))

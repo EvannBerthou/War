@@ -43,7 +43,10 @@ class StrategyChooser:
         self.tittle = self.add_text("Choose a strategy.", 52)
         self.buttons = []
 
+        self.show = True
+
     def draw(self, game):
+        if not self.show: return
         pygame.draw.rect(game.blitting_surface, (192,192,192), (self.x,self.y,self.w,self.h))
         [e.draw(game) for e in self.buttons + [self.tittle]]
 
@@ -62,6 +65,10 @@ class StrategyChooser:
         self.total_height += button_h + BUTTON_MARGIN_H
 
     def update(self, mouse_position):
+        if not self.show: return
         for btn in self.buttons:
             if btn.rect.collidepoint(mouse_position):
                 btn.callback()
+
+    def toggle(self):
+        self.show = not self.show
