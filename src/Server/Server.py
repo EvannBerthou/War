@@ -20,7 +20,7 @@ class ClientThread(Thread):
                     print(r)
                 else:
                     self.server.add_str('[-] Déconnexion d\'un joueur')
-                    server.number_of_client -= 1
+                    server.clients.remove(self)
                     self.running = False
 
 class Server:

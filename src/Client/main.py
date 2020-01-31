@@ -3,7 +3,7 @@ import pygame
 from pygame.locals import *
 
 from player import Player
-from ui import StrategyChooser
+from ui import StrategyChooser, Button
 from Client import GameSocket
 
 class GAME_PHASE:
@@ -44,6 +44,8 @@ class Game:
         self.game_phase = GAME_PHASE.CHOOSING
         self.strategy_chooser = self.create_strategy_chooser()
 
+        self.confirm_button = Button(0,0,150,40, self.confirm, (150,150,150), 'Confirm', 36)
+
     def run(self):
         while self.running:
             mouse_position = self.screen_to_world(pygame.mouse.get_pos())
@@ -72,7 +74,11 @@ class Game:
         for p in self.players:
             p.draw_target(self)
 
-        self.strategy_chooser.draw(self)
+        if self.game_phase == GAME_PHASE.CHOOSING:
+            self.strategy_chooser.draw(self)
+
+        if self.game_phase == GAME_PHASE.TARGETING:
+            self.confirm_button.draw(self)
 
         self.win.blit(pygame.transform.scale(self.blitting_surface, (self.w,self.h)),(0,0))
         pygame.display.update()
@@ -90,6 +96,9 @@ class Game:
                     else:
                         player.targets.append(p)
 
+        if self.game_phase == GAME_PHASE.TARGETING:
+            self.confirm_button.is_clicked(mouse_position)
+
     def switch_state(self, phase):
         if phase == self.game_phase: return
 
@@ -105,6 +114,10 @@ class Game:
     def on_defense(self):
         self.game_phase = GAME_PHASE.DONE
         self.strategy_chooser.toggle()
+
+    def confirm(self):
+        self.game_phase = GAME_PHASE.DONE
+        print('Done')
 
     def screen_to_world(self, pos):
         return (int(pos[0] * self.ratio[0]), int(pos[1] * self.ratio[1]))

@@ -20,6 +20,9 @@ class Button:
         pygame.draw.rect(game.blitting_surface, self.color, (self.x,self.y,self.w,self.h))
         self.text.draw(game)
 
+    def is_clicked(self, mouse_position):
+        if self.rect.collidepoint(mouse_position): self.callback()
+
 class Text:
     def __init__(self, x,y, text, size, center=False):
         self.x,self.y = x,y
@@ -66,9 +69,7 @@ class StrategyChooser:
 
     def update(self, mouse_position):
         if not self.show: return
-        for btn in self.buttons:
-            if btn.rect.collidepoint(mouse_position):
-                btn.callback()
+        for btn in self.buttons: btn.is_clicked(mouse_position)
 
     def toggle(self):
         self.show = not self.show
