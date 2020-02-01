@@ -64,3 +64,6 @@ class Player(pygame.sprite.Sprite):
         return self.rect.collidepoint(mouse_pos)
         distance_to_center = (mouse_pos[0] - self.selector[0])**2 + (mouse_pos[1] - self.selector[1])**2
         return distance_to_center < self.selector_radius**2
+
+    def get_target_list(self):
+        return "targets " + self.identifier + " " + " ".join(target.identifier for target in self.targets)

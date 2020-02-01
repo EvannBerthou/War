@@ -118,6 +118,7 @@ class Game:
 
     def confirm(self):
         self.game_phase = GAME_PHASE.DONE
+        self.game_socket.socket.send(self.local_player.get_target_list().encode())
         print('Done')
 
     def screen_to_world(self, pos):
@@ -131,7 +132,8 @@ class Game:
 
         for i,client in enumerate(clients):
             if int(client.split(':')[1]) == self.game_socket.port:
-                self.players.add(Player(self.DESIGN_W, self.DESIGN_H, -default_rotation, 1, client))
+                self.local_player = Player(self.DESIGN_W, self.DESIGN_H, -default_rotation, 1, client)
+                self.players.add(self.local_player)
                 clients.remove(client)
 
 

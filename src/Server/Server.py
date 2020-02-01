@@ -7,6 +7,7 @@ class ClientThread(Thread):
     def __init__(self, ip, port, socket, server):
         super().__init__()
         self.ip, self.port = ip, port
+        self.identifier = f'{ip}:{port}'
         self.socket = socket
         self.running = True
         self.server = server
@@ -17,7 +18,7 @@ class ClientThread(Thread):
             if ready[0]:
                 r = self.socket.recv(1024).decode()
                 if r.strip(' ') != "":
-                    print(r)
+                    self.server.add_str(r)
                 else:
                     self.server.add_str('[-] Déconnexion d\'un joueur')
                     server.clients.remove(self)
@@ -58,9 +59,12 @@ class Server:
                 newthread = ClientThread(ip, port, socket, self)
                 newthread.start()
                 self.clients.append(newthread)
-                number_of_clients = len(self.clients)
+                clients = self.get_client_list()
                 for client in self.clients:
-                    client.socket.send(f'client {number_of_clients}'.encode())
+                    client.socket.send(f'clients {clients}'.encode())
+
+    def get_client_list(self):
+        return " ".join([client.identifier for client in self.clients])
 
 server = Server()
 server.run()
