@@ -5,11 +5,13 @@ from threading import Thread
 class GameSocket:
     def connect_to_server(self):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # s.connect(('192.168.1.41', 25565))
         s.connect(('127.0.0.1', 25565))
         return s
 
     def __init__(self, game):
         self.socket = self.connect_to_server()
+        self.port = self.socket.getsockname()[1]
         self.Listener = Listener(self.socket, game)
         self.Listener.start()
 
@@ -32,6 +34,6 @@ class Listener(Thread):
                 data = self.socket.recv(1024).decode()
                 print(data, flush = True)
                 parts = data.split(' ')
-                if parts[0] == 'client':
-                    self.game.number_of_player = int(parts[1])
-                    self.game.add_player()
+                if parts[0] == 'clients':
+                    client_list = parts[1:]
+                    self.game.add_player(client_list)

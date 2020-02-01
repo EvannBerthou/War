@@ -91,6 +91,7 @@ class Game:
                     p.selector_selected = not p.selector_selected
                 else:
                     player = self.players.sprites()[0]
+                    print(p.identifier)
                     if p in player.targets:
                         player.targets.remove(p)
                     else:
@@ -122,13 +123,23 @@ class Game:
     def screen_to_world(self, pos):
         return (int(pos[0] * self.ratio[0]), int(pos[1] * self.ratio[1]))
 
-    def add_player(self):
+    def add_player(self, clients):
         self.players.empty()
+        self.number_of_player = len(clients)
+
         default_rotation = -90
 
-        for player in range(self.number_of_player):
-            angle = player * (360 / self.number_of_player) - default_rotation
-            self.players.add(Player(self.DESIGN_W, self.DESIGN_H, angle, local = player == 0))
+        for i,client in enumerate(clients):
+            if int(client.split(':')[1]) == self.game_socket.port:
+                self.players.add(Player(self.DESIGN_W, self.DESIGN_H, -default_rotation, 1, client))
+                clients.remove(client)
+
+
+        for i,identifier in enumerate(clients):
+            port = int(identifier.split(':')[1])
+            local = port == self.game_socket.port
+            angle = (i + 1) * (360 / self.number_of_player) - default_rotation
+            self.players.add(Player(self.DESIGN_W, self.DESIGN_H, angle, local, identifier))
 
 game = Game(1280, 720)
 game.run()

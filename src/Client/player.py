@@ -31,7 +31,7 @@ class Player(pygame.sprite.Sprite):
         selector_x, selector_y = self.get_position(win_w, win_h, angle, 0,0, DISTANCE_FROM_CENTER - 75)
         return (selector_x, selector_y)
 
-    def __init__(self, win_w, win_h, angle, local):
+    def __init__(self, win_w, win_h, angle, local, identifier):
         super().__init__()
         self.w, self.h = 100,50
         self.x, self.y = self.get_position(win_w, win_h, angle, self.w / 2, self.h / 2, DISTANCE_FROM_CENTER)
@@ -50,6 +50,8 @@ class Player(pygame.sprite.Sprite):
 
         self.targeting = True
         self.targets = []
+
+        self.identifier = identifier
 
 
     def draw_target(self, game):
