@@ -19,6 +19,14 @@ class ClientThread(Thread):
                 r = self.socket.recv(1024).decode()
                 if r.strip(' ') != "":
                     self.server.add_str(r)
+                    parts = r.split(' ')
+                    if parts[0] == "targets":
+                        self.server.actions[self.identifier] = ['targets', parts[1:]]
+                        self.server.player_ready += 1
+                    if parts[0] == "defense":
+                        self.server.actions[self.identifier] = ['defense']
+                        self.server.player_ready += 1
+                    self.server.confirm_actions()
                 else:
                     self.server.add_str('[-] Déconnexion d\'un joueur')
                     server.clients.remove(self)
@@ -41,6 +49,9 @@ class Server:
         self.stdscr.scrollok(True)
 
         self.clients = []
+
+        self.actions = {}
+        self.player_ready = 0
 
     def add_str(self, text):
         self.stdscr.addstr(f'{text}\n')
@@ -65,6 +76,10 @@ class Server:
 
     def get_client_list(self):
         return " ".join([client.identifier for client in self.clients])
+
+    def confirm_actions(self):
+        self.add_str(self.actions)
+        self.add_str(self.player_ready)
 
 server = Server()
 server.run()
