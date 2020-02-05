@@ -136,7 +136,6 @@ class Game:
 
         for i,client in enumerate(clients):
             parts = client.split(':')
-            print(parts)
             if int(parts[1]) == self.game_socket.port:
                 color = self.convert_to_color(parts[2])
                 self.local_player = Player(self.DESIGN_W, self.DESIGN_H, -default_rotation, 1, client, color)
@@ -145,10 +144,14 @@ class Game:
 
 
         for i,identifier in enumerate(clients):
-            port = int(identifier.split(':')[1])
+            print(identifier)
+            parts = identifier.split(':')
+            print(parts)
+            port = int(parts[1])
+            color = self.convert_to_color(parts[2])
             local = port == self.game_socket.port
             angle = (i + 1) * (360 / self.number_of_player) - default_rotation
-            self.players.add(Player(self.DESIGN_W, self.DESIGN_H, angle, local, identifier))
+            self.players.add(Player(self.DESIGN_W, self.DESIGN_H, angle, local, identifier, color))
 
     def set_scores(self, str_data):
         self.scores = json.loads(str_data)
