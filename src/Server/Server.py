@@ -96,10 +96,13 @@ class Server:
 
     def end_turn(self):
         for player in self.actions:
-            action = self.actions[player]
+            identifier = ":".join(player.split(':')[:2])
+            print(identifier)
+            action = self.actions[identifier]
             if action[0] == 'targets':
                 targets = [target for target in action[1]]
                 for target in targets:
+                    target = ":".join(target.split(':')[:2])
                     ennemy_action = self.actions[target][0]
                     if ennemy_action == 'targets':
                         self.scores[player] += 10
@@ -121,7 +124,7 @@ class Server:
     def send_score(self):
         str_data = json.dumps(self.scores)
         for client in self.clients:
-            client.socket.send(('scores ' + str_data).encode())
+            client[0].socket.send(('scores ' + str_data).encode())
 
     def disconnect(self, client):
         for c in self.clients:
