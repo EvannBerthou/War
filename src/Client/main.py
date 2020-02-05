@@ -135,8 +135,11 @@ class Game:
         default_rotation = -90
 
         for i,client in enumerate(clients):
-            if int(client.split(':')[1]) == self.game_socket.port:
-                self.local_player = Player(self.DESIGN_W, self.DESIGN_H, -default_rotation, 1, client)
+            parts = client.split(':')
+            print(parts)
+            if int(parts[1]) == self.game_socket.port:
+                color = self.convert_to_color(parts[2])
+                self.local_player = Player(self.DESIGN_W, self.DESIGN_H, -default_rotation, 1, client, color)
                 self.players.add(self.local_player)
                 clients.remove(client)
 
@@ -150,6 +153,13 @@ class Game:
     def set_scores(self, str_data):
         self.scores = json.loads(str_data)
         print(self.scores)
+
+    def set_local_color(self, r,g,b):
+        self.players.sprites()[0].set_color((r,g,b))
+
+    def convert_to_color(self, string):
+        return [int(part) for part in string.split(',')]
+
 
 game = Game(1280, 720)
 game.run()

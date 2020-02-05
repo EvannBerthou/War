@@ -19,8 +19,8 @@ class Player(pygame.sprite.Sprite):
                 pygame.image.load(file_path),
                 (self.w, self.h))
 
-    def create_surface(self):
-        self.sprite.fill((255,0,0) if self.local else (255,0,255))
+    def create_surface(self, color):
+        self.sprite.fill(color)
         rotated = pygame.transform.rotate(self.sprite, self.angle)
         center = self.rect.center
         self.rect = rotated.get_rect()
@@ -31,7 +31,7 @@ class Player(pygame.sprite.Sprite):
         selector_x, selector_y = self.get_position(win_w, win_h, angle, 0,0, DISTANCE_FROM_CENTER - 75)
         return (selector_x, selector_y)
 
-    def __init__(self, win_w, win_h, angle, local, identifier):
+    def __init__(self, win_w, win_h, angle, local, identifier, color):
         super().__init__()
         self.w, self.h = 100,50
         self.x, self.y = self.get_position(win_w, win_h, angle, self.w / 2, self.h / 2, DISTANCE_FROM_CENTER)
@@ -42,7 +42,7 @@ class Player(pygame.sprite.Sprite):
 
         self.angle = self.look_at_center(win_w / 2, win_h / 2)
         self.local = local
-        self.image = self.create_surface()
+        self.image = self.create_surface(color)
 
         self.selector = self.create_selector(win_w, win_h, angle)
         self.selector_selected = False

@@ -2,6 +2,7 @@ import socket
 import curses
 import select
 import json
+import random
 from threading import Thread
 
 class ClientThread(Thread):
@@ -28,7 +29,7 @@ class ClientThread(Thread):
                     self.server.confirm_actions()
                 else:
                     self.server.add_str('[-] Déconnexion d\'un joueur')
-                    server.clients.remove(self)
+                    self.server.disconnect(self)
                     self.running = False
 
 class Server:
@@ -48,9 +49,15 @@ class Server:
         self.stdscr.scrollok(True)
 
         self.clients = []
+        self.colors_left = [
+                "255,255,255", "255,255,0", "0,255,255",
+                "255,0,255", "255,0,0", "0,255,0",
+                "0,0,255", "0,128,128", "128,0,128",
+        ]
 
         self.actions = {}
         self.scores = {}
+
 
     def add_str(self, text):
         self.stdscr.addstr(f'{text}\n')
@@ -68,14 +75,18 @@ class Server:
                 self.add_str('[+] Nouvelle connection.')
                 newthread = ClientThread(ip, port, socket, self)
                 newthread.start()
-                self.clients.append(newthread)
+                color = self.get_random_color()
+                self.clients.append((newthread, color))
                 self.scores[f'{ip}:{port}'] = 0
                 clients = self.get_client_list()
                 for client in self.clients:
-                    client.socket.send(f'clients {clients}'.encode())
+                    client[0].socket.send(f'clients{clients}'.encode())
 
     def get_client_list(self):
-        return " ".join([client.identifier for client in self.clients])
+        string = ""
+        for thread,col in self.clients:
+            string += f' {thread.identifier}:{col}'
+        return string
 
     def confirm_actions(self):
         self.add_str(self.actions)
@@ -111,6 +122,14 @@ class Server:
         str_data = json.dumps(self.scores)
         for client in self.clients:
             client.socket.send(('scores ' + str_data).encode())
+
+    def disconnect(self, client):
+        for c in self.clients:
+            if c[0] == client:
+                self.clients.remove(c)
+
+    def get_random_color(self):
+        return self.colors_left.pop(random.randrange(len(self.colors_left)-1))
 
 server = Server()
 server.run()
