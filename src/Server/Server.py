@@ -22,10 +22,8 @@ class ClientThread(Thread):
                     parts = r.split(' ')
                     if parts[0] == "targets":
                         self.server.actions[self.identifier] = ['targets', parts[1:]]
-                        self.server.player_ready += 1
                     if parts[0] == "defense":
                         self.server.actions[self.identifier] = ['defense']
-                        self.server.player_ready += 1
                     self.server.confirm_actions()
                 else:
                     self.server.add_str('[-] Déconnexion d\'un joueur')
@@ -51,7 +49,7 @@ class Server:
         self.clients = []
 
         self.actions = {}
-        self.player_ready = 0
+        self.scores = {}
 
     def add_str(self, text):
         self.stdscr.addstr(f'{text}\n')
@@ -70,6 +68,7 @@ class Server:
                 newthread = ClientThread(ip, port, socket, self)
                 newthread.start()
                 self.clients.append(newthread)
+                self.scores[newthread] = 0
                 clients = self.get_client_list()
                 for client in self.clients:
                     client.socket.send(f'clients {clients}'.encode())
@@ -79,7 +78,8 @@ class Server:
 
     def confirm_actions(self):
         self.add_str(self.actions)
-        self.add_str(self.player_ready)
+        if len(self.actions) == len(self.clients):
+            self.add_str('Fin du tour')
 
 server = Server()
 server.run()

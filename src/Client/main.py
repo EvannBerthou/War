@@ -114,6 +114,7 @@ class Game:
 
     def on_defense(self):
         self.game_phase = GAME_PHASE.DONE
+        self.game_socket.socket.send('defense'.encode())
         self.strategy_chooser.toggle()
 
     def confirm(self):

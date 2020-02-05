@@ -66,4 +66,4 @@ class Player(pygame.sprite.Sprite):
         return distance_to_center < self.selector_radius**2
 
     def get_target_list(self):
-        return "targets " + self.identifier + " " + " ".join(target.identifier for target in self.targets)
+        return "targets " + " ".join(target.identifier for target in self.targets)
