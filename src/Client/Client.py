@@ -37,3 +37,5 @@ class Listener(Thread):
                 if parts[0] == 'clients':
                     client_list = parts[1:]
                     self.game.add_player(client_list)
+                if parts[0] == "scores":
+                    self.game.set_scores(" ".join(parts[1:]))

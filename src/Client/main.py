@@ -1,4 +1,5 @@
 import socket
+import json
 import pygame
 from pygame.locals import *
 
@@ -45,6 +46,8 @@ class Game:
         self.strategy_chooser = self.create_strategy_chooser()
 
         self.confirm_button = Button(0,0,150,40, self.confirm, (150,150,150), 'Confirm', 36)
+
+        self.scores = {}
 
     def run(self):
         while self.running:
@@ -143,6 +146,10 @@ class Game:
             local = port == self.game_socket.port
             angle = (i + 1) * (360 / self.number_of_player) - default_rotation
             self.players.add(Player(self.DESIGN_W, self.DESIGN_H, angle, local, identifier))
+
+    def set_scores(self, str_data):
+        self.scores = json.loads(str_data)
+        print(self.scores)
 
 game = Game(1280, 720)
 game.run()

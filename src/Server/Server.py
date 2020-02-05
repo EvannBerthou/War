@@ -1,6 +1,7 @@
 import socket
 import curses
 import select
+import json
 from threading import Thread
 
 class ClientThread(Thread):
@@ -104,6 +105,12 @@ class Server:
                         self.scores[key] += 1
 
         self.add_str(self.scores)
+        self.send_score()
+
+    def send_score(self):
+        str_data = json.dumps(self.scores)
+        for client in self.clients:
+            client.socket.send(('scores ' + str_data).encode())
 
 server = Server()
 server.run()
