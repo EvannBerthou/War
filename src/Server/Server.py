@@ -68,7 +68,7 @@ class Server:
                 newthread = ClientThread(ip, port, socket, self)
                 newthread.start()
                 self.clients.append(newthread)
-                self.scores[newthread] = 0
+                self.scores[f'{ip}:{port}'] = 0
                 clients = self.get_client_list()
                 for client in self.clients:
                     client.socket.send(f'clients {clients}'.encode())
@@ -80,6 +80,30 @@ class Server:
         self.add_str(self.actions)
         if len(self.actions) == len(self.clients):
             self.add_str('Fin du tour')
+            self.end_turn()
+
+    def end_turn(self):
+        for player in self.actions:
+            action = self.actions[player]
+            if action[0] == 'targets':
+                targets = [target for target in action[1]]
+                for target in targets:
+                    ennemy_action = self.actions[target][0]
+                    if ennemy_action == 'targets':
+                        self.scores[player] += 10
+                        self.scores[target] -= 10
+
+                    if ennemy_action == 'defense':
+                        self.scores[target] += 10
+                        self.scores[player] -= 10
+
+            if action[0] == 'defense':
+                self.scores[player] -= len(self.clients) - 1
+                for key in self.scores:
+                    if key != player:
+                        self.scores[key] += 1
+
+        self.add_str(self.scores)
 
 server = Server()
 server.run()
