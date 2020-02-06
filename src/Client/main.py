@@ -4,7 +4,7 @@ import pygame
 from pygame.locals import *
 
 from player import Player
-from ui import StrategyChooser, Button
+from ui import StrategyChooser, Button, Text
 from Client import GameSocket
 
 class GAME_PHASE:
@@ -48,6 +48,7 @@ class Game:
         self.confirm_button = Button(0,0,150,40, self.confirm, (150,150,150), 'Confirm', 36)
 
         self.scores = {}
+        self.scores_texts = {}
 
     def run(self):
         while self.running:
@@ -76,6 +77,9 @@ class Game:
 
         for p in self.players:
             p.draw_target(self)
+
+        for text in self.scores_texts:
+            self.scores_texts[text].draw(self)
 
         if self.game_phase == GAME_PHASE.CHOOSING:
             self.strategy_chooser.draw(self)
@@ -130,6 +134,7 @@ class Game:
 
     def add_player(self, clients):
         self.players.empty()
+        self.scores_texts = {}
         self.number_of_player = len(clients)
 
         default_rotation = -90
@@ -137,25 +142,30 @@ class Game:
         for i,client in enumerate(clients):
             parts = client.split(':')
             if int(parts[1]) == self.game_socket.port:
+                identifier = '{}:{}'.format(parts[0], parts[1])
                 color = self.convert_to_color(parts[2])
                 self.local_player = Player(self.DESIGN_W, self.DESIGN_H, -default_rotation, 1, client, color)
                 self.players.add(self.local_player)
+                self.scores_texts[identifier] = Text(0,0, color, "0", 46)
                 clients.remove(client)
 
 
-        for i,identifier in enumerate(clients):
-            print(identifier)
-            parts = identifier.split(':')
-            print(parts)
+        for i,client in enumerate(clients):
+            parts = client.split(':')
+            identifier = '{}:{}'.format(parts[0], parts[1])
             port = int(parts[1])
             color = self.convert_to_color(parts[2])
             local = port == self.game_socket.port
             angle = (i + 1) * (360 / self.number_of_player) - default_rotation
-            self.players.add(Player(self.DESIGN_W, self.DESIGN_H, angle, local, identifier, color))
+            self.players.add(Player(self.DESIGN_W, self.DESIGN_H, angle, local, client, color))
+            self.scores_texts[identifier] = Text(0,(i + 1) * 50, color, "0", 46)
 
     def set_scores(self, str_data):
         self.scores = json.loads(str_data)
-        print(self.scores)
+        for key in self.scores_texts:
+            text = self.scores_texts[key]
+            score = self.scores[key]
+            text.set_text(str(score))
 
     def set_local_color(self, r,g,b):
         self.players.sprites()[0].set_color((r,g,b))

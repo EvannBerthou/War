@@ -14,7 +14,7 @@ class Button:
         self.callback = callback
         self.color = color
 
-        self.text = Text(self.x + self.w / 2, self.y + self.h / 2, text, size, True)
+        self.text = Text(self.x + self.w / 2, self.y + self.h / 2, (255,255,255),text, size, True)
 
     def draw(self,game):
         pygame.draw.rect(game.blitting_surface, self.color, (self.x,self.y,self.w,self.h))
@@ -24,11 +24,12 @@ class Button:
         if self.rect.collidepoint(mouse_position): self.callback()
 
 class Text:
-    def __init__(self, x,y, text, size, center=False):
+    def __init__(self, x,y, color, text, size, center=False):
         self.x,self.y = x,y
+        self.color = color
 
-        font = pygame.font.SysFont("Arial", size)
-        self.surface = font.render(text, 1, (255,255,255))
+        self.font = pygame.font.SysFont("Arial", size)
+        self.surface = self.font.render(text, 1, self.color)
         self.height = self.surface.get_height()
 
         if center:
@@ -37,6 +38,9 @@ class Text:
 
     def draw(self, game):
         game.blitting_surface.blit(self.surface, (self.x, self.y))
+
+    def set_text(self, text):
+        self.surface = self.font.render(text, 1, self.color)
 
 class StrategyChooser:
     def __init__(self, x,y,w,h):
@@ -56,7 +60,7 @@ class StrategyChooser:
     def add_text(self, text, size):
         text_obj = Text(
                     self.x + RIGHT_MARGIN, self.y + self.total_height + TOP_MARGIN,
-                    text, size
+                    (255,255,255), text, size
                 )
         self.total_height += (text_obj.height + BUTTON_MARGIN_H)
         return text_obj

@@ -97,7 +97,6 @@ class Server:
     def end_turn(self):
         for player in self.actions:
             identifier = ":".join(player.split(':')[:2])
-            print(identifier)
             action = self.actions[identifier]
             if action[0] == 'targets':
                 targets = [target for target in action[1]]
