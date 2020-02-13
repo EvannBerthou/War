@@ -77,3 +77,19 @@ class StrategyChooser:
 
     def toggle(self):
         self.show = not self.show
+
+class RequestPanel:
+    def __init__(self, x,y,w,h):
+        self.rect = pygame.Rect(x,y,w,h)
+        self.options_list = None
+        self.buttons = []
+        self.tittle = Text(
+                    self.rect.x + self.rect.w / 2,
+                    self.rect.y + TOP_MARGIN + 20,
+                    (0,0,0), "Request", 52, center = True)
+        self.show = True
+
+    def draw(self, game):
+        if not self.show: return
+        pygame.draw.rect(game.blitting_surface, (192,192,192), self.rect)
+        [e.draw(game) for e in self.buttons + [self.tittle]]

@@ -4,7 +4,7 @@ import pygame
 from pygame.locals import *
 
 from player import Player
-from ui import StrategyChooser, Button, Text
+from ui import StrategyChooser, Button, Text, RequestPanel
 from Client import GameSocket
 
 class GAME_PHASE:
@@ -29,6 +29,17 @@ class Game:
 
         return strategy_chooser
 
+    def create_request_panel(self):
+        request_panel_w = 600
+        request_panel_h = 500
+        request_panel = RequestPanel(
+                                self.DESIGN_W - request_panel_w,
+                                self.DESIGN_H - request_panel_h,
+                                request_panel_w,
+                                request_panel_h)
+
+        return request_panel
+
     def __init__(self, w,h):
         self.w,self.h = w,h
         self.DESIGN_W, self.DESIGN_H = 1920,1080
@@ -44,6 +55,7 @@ class Game:
 
         self.game_phase = GAME_PHASE.CHOOSING
         self.strategy_chooser = self.create_strategy_chooser()
+        self.request_panel = self.create_request_panel()
 
         self.confirm_button = Button(0,0,150,40, self.confirm, (150,150,150), 'Confirm', 36)
 
@@ -86,6 +98,8 @@ class Game:
 
         if self.game_phase == GAME_PHASE.TARGETING:
             self.confirm_button.draw(self)
+
+        self.request_panel.draw(self)
 
         self.win.blit(pygame.transform.scale(self.blitting_surface, (self.w,self.h)),(0,0))
         pygame.display.update()
